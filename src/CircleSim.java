@@ -13,6 +13,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import java.util.*;
 import javafx.scene.paint.Color;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
 
 
 public class CircleSim extends Application {
@@ -30,13 +32,7 @@ public class CircleSim extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         PixelWriter pw = gc.getPixelWriter();
         root.getChildren().add(canvas);
-        Button b1 = new Button("Left");
-        Button b2 = new Button("Left'");
-        Button b3 = new Button("Right");
-        Button b4 = new Button("Right'");
-        HBox hb1 = new HBox(b1, b2, b3, b4);
-        VBox vb1 = new VBox(root, hb1);
-        primaryStage.setScene(new Scene(vb1));
+        primaryStage.setScene(new Scene(root));
 
 
         currentPuzzle = createPuzzle(2);
@@ -47,32 +43,30 @@ public class CircleSim extends Application {
 
         primaryStage.show();
 
-        b1.setOnAction(Event -> {
-            long time1 = System.currentTimeMillis();
-            currentPuzzle.turnCW(0);
-            long time2 = System.currentTimeMillis();
-            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-            long time3 = System.currentTimeMillis();
-            drawPuzzle(currentPuzzle, pw, canvas);
-            long time4 = System.currentTimeMillis();
-            System.out.println(time2-time1);
-            System.out.println(time3-time2);
-            System.out.println(time4-time3);
-        });
-        b2.setOnAction(Event -> {
-            currentPuzzle.turnCCW(0);
-            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawPuzzle(currentPuzzle, pw, canvas);
-        });
-        b3.setOnAction(Event -> {
-            currentPuzzle.turnCW(1);
-            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawPuzzle(currentPuzzle, pw, canvas);
-        });
-        b4.setOnAction(Event -> {
-            currentPuzzle.turnCCW(1);
-            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawPuzzle(currentPuzzle, pw, canvas);
+        canvas.addEventHandler(MouseEvent.MOUSE_CLICKED,
+        new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent me) {
+                double clickX = me.getX();
+                double clickY = me.getY();
+                double squareDistance;
+                double minSquareDistance = 1000000000.0;
+                CutCircle closestCircle = null;
+                for(CutCircle circle : currentPuzzle.getCircles()) {
+                    if(circle.isTurningCircle()) {
+                        squareDistance = (circle.getCenterX()-clickX)*(circle.getCenterX()-clickX)+(circle.getCenterY()-clickY)*(circle.getCenterY()-clickY);
+                        System.out.println(squareDistance);
+                        if(squareDistance < minSquareDistance) {
+                            minSquareDistance = squareDistance;
+                            closestCircle = circle;
+                        }
+                    }
+                }
+                if(me.getButton() == MouseButton.PRIMARY) currentPuzzle.turnCW(closestCircle);
+                else if(me.getButton() == MouseButton.SECONDARY) currentPuzzle.turnCCW(closestCircle);
+                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                drawPuzzle(currentPuzzle, pw, canvas);
+            }
         });
     }
 

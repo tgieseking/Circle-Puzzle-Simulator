@@ -20,12 +20,21 @@ public class Puzzle {
         System.out.println("Working?");
     }
 
+    public void turnCW(CutCircle turningCircle) {
+        for(Piece piece : pieces) {
+            piece.turnCW(turningCircle);
+        }
+    }
     public void turnCW(int circleNum) {
         for(Piece piece : pieces) {
             piece.turnCW(circles.get(circleNum));
         }
     }
-
+    public void turnCCW(CutCircle turningCircle) {
+        for(Piece piece : pieces) {
+            piece.turnCCW(turningCircle);
+        }
+    }
     public void turnCCW(int circleNum) {
         for(Piece piece : pieces) {
             piece.turnCCW(circles.get(circleNum));
