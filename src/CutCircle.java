@@ -42,11 +42,11 @@ public class CutCircle {
     public void addCycle(ArrayList<CutCircle> cycle) {
         //Sets the nextClockwise and nextCounterClockwise functions given a piece cycle going clockwise
         for(int i=1; i<cycle.size(); i++) {
-            nextClockwise.put(cycle.get(i-1), cycle.get(i));
-            nextCounterClockwise.put(cycle.get(i), cycle.get(i-1));
+            nextCounterClockwise.put(cycle.get(i-1), cycle.get(i));
+            nextClockwise.put(cycle.get(i), cycle.get(i-1));
         }
-        nextClockwise.put(cycle.get(cycle.size()-1),cycle.get(0));
-        nextCounterClockwise.put(cycle.get(0),cycle.get(cycle.size()-1));
+        nextCounterClockwise.put(cycle.get(cycle.size()-1),cycle.get(0));
+        nextClockwise.put(cycle.get(0),cycle.get(cycle.size()-1));
     }
 
     public void addCycles(List<ArrayList<CutCircle>> cycles) {

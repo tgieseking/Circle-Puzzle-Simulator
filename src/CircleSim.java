@@ -15,6 +15,7 @@ import java.util.*;
 import javafx.scene.paint.Color;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class CircleSim extends Application {
@@ -32,7 +33,11 @@ public class CircleSim extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         PixelWriter pw = gc.getPixelWriter();
         root.getChildren().add(canvas);
-        primaryStage.setScene(new Scene(root));
+        TextField scramblerField = new TextField();
+        Button scramblerButton = new Button("Scramble");
+        HBox scramblerBox = new HBox(scramblerField,scramblerButton);
+        VBox bigBox = new VBox(root, scramblerBox);
+        primaryStage.setScene(new Scene(bigBox));
 
 
         currentPuzzle = createPuzzle(2);
@@ -51,19 +56,36 @@ public class CircleSim extends Application {
                 double squareDistance;
                 double minSquareDistance = 1000000000.0;
                 CutCircle closestCircle = null;
-                for(CutCircle circle : currentPuzzle.getCircles()) {
-                    if(circle.isTurningCircle()) {
-                        squareDistance = PMath.squareDistance(clickX, clickY, circle.getCenterX(), circle.getCenterY());
-                        if(squareDistance < minSquareDistance) {
-                            minSquareDistance = squareDistance;
-                            closestCircle = circle;
-                        }
+                for(CutCircle circle : currentPuzzle.getTurningCircles()) {
+                    squareDistance = PMath.squareDistance(clickX, clickY, circle.getCenterX(), circle.getCenterY());
+                    if(squareDistance < minSquareDistance) {
+                        minSquareDistance = squareDistance;
+                        closestCircle = circle;
                     }
                 }
                 if(me.getButton() == MouseButton.PRIMARY) currentPuzzle.turnCW(closestCircle);
                 else if(me.getButton() == MouseButton.SECONDARY) currentPuzzle.turnCCW(closestCircle);
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
                 drawPuzzle(currentPuzzle, pw, canvas);
+            }
+        });
+        scramblerButton.setOnAction(event -> {
+            try {
+                int turns = Integer.parseInt(scramblerField.getText());
+                ArrayList<CutCircle> turningCircles = currentPuzzle.getTurningCircles();
+                for(int i=0; i<turns; i++) {
+                    if(ThreadLocalRandom.current().nextInt(0, 2) == 0) {
+                        currentPuzzle.turnCW(turningCircles.get(ThreadLocalRandom.current().nextInt(0,turningCircles.size())));
+                    }
+                    else {
+                        currentPuzzle.turnCCW(turningCircles.get(ThreadLocalRandom.current().nextInt(0,turningCircles.size())));
+                    }
+                }
+                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                drawPuzzle(currentPuzzle, pw, canvas);
+            }
+            catch(Exception e) {
+
             }
         });
     }

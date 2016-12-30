@@ -4,6 +4,8 @@ import javafx.scene.paint.Color;
 public class Puzzle {
     private ArrayList<CutCircle> circles;
     public ArrayList<CutCircle> getCircles() {return circles;}
+    private ArrayList<CutCircle> turningCircles;
+    public ArrayList<CutCircle> getTurningCircles() {return turningCircles;}
     private HashSet<Piece> pieces;
     public HashSet<Piece> getPieces() {return pieces;}
     private HashSet<Position> positions;
@@ -13,6 +15,10 @@ public class Puzzle {
         circles = cs;
         positions = pos;
         pieces = ps;
+        turningCircles = new ArrayList<CutCircle>();
+        for(CutCircle c : circles) {
+            if(c.isTurningCircle()) turningCircles.add(c);
+        }
     }
 
     public void testFunc() {
