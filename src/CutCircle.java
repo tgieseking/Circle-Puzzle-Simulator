@@ -27,7 +27,7 @@ public class CutCircle {
 
     public int circlePosition(int x, int y) {
         //For a given pixel, returns 0 if it is in the circle, 1 if it is in the border, and 2 if it is outside the circle
-        int d2 = (x-centerX)*(x-centerX) + (y-centerY)*(y-centerY);
+        int d2 = PMath.squareDistance(x, y, centerX, centerY);
         if(d2 <= radius*radius) return 0;
         else if(d2 <= (radius+borderWidth)*(radius+borderWidth)) return 1;
         else return 2;

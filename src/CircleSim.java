@@ -37,7 +37,6 @@ public class CircleSim extends Application {
 
         currentPuzzle = createPuzzle(2);
         setPositionPixels(currentPuzzle, 800, 800);
-        System.out.println("set pixels");
         drawPuzzle(currentPuzzle, pw, canvas);
 
 
@@ -54,8 +53,7 @@ public class CircleSim extends Application {
                 CutCircle closestCircle = null;
                 for(CutCircle circle : currentPuzzle.getCircles()) {
                     if(circle.isTurningCircle()) {
-                        squareDistance = (circle.getCenterX()-clickX)*(circle.getCenterX()-clickX)+(circle.getCenterY()-clickY)*(circle.getCenterY()-clickY);
-                        System.out.println(squareDistance);
+                        squareDistance = PMath.squareDistance(clickX, clickY, circle.getCenterX(), circle.getCenterY());
                         if(squareDistance < minSquareDistance) {
                             minSquareDistance = squareDistance;
                             closestCircle = circle;
@@ -163,7 +161,6 @@ public class CircleSim extends Application {
                         if(pixelBoundingCircles.equals(position.getBoundingCircles())) inPuzzle = true;
                     }
                     if(!inPuzzle) {
-                        System.out.println("added piece");
                         newPosition = new Position();
                         nextClockwise = newPosition.getNextClockwise();
                         for(CutCircle circle : pixelBoundingCircles) {
