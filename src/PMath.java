@@ -1,7 +1,7 @@
 public final class PMath {
     private PMath() {}
 
-    public static final double EPSILON = 10;
+    public static final double EPSILON = 1;
 
     public static double squareDistance(double x1, double y1, double x2, double y2) {
         return (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);

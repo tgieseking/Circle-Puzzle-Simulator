@@ -158,11 +158,20 @@ public class CircleSim extends Application {
         //     return puzz;
         // }
         if(selector == 3) {
-            CutCircle TCL = new CutCircle(250.0, 400.0, 250.0, 2.0, true);
-            CutCircle TCR = new CutCircle(445.0, 400.0, 250.0, 2.0, true);
+            CutCircle TCL = new CutCircle(302.5, 400.0, 250.0, 2.0, true);
+            CutCircle TCR = new CutCircle(497.5, 400.0, 250.0, 2.0, true);
             ArrayList<CutCircle> turningCircles = new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCL,TCR}));
             ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(new Color[]{Color.YELLOW,Color.BLUE}));
             Puzzle puzz = puzzleFromTurningCircles(turningCircles, 4, 800, 800, colors);
+            return puzz;
+        }
+        if(selector == 4) {
+            CutCircle TCL = new CutCircle(250.0, 500.0, 200.0, 2.0, true);
+            CutCircle TCR = new CutCircle(550.0, 500.0, 200.0, 2.0, true);
+            CutCircle TCT = new CutCircle(400.0, 500.0-150.0*Math.sqrt(3.0), 200.0, 2.0, true);
+            ArrayList<CutCircle> turningCircles = new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCT,TCL,TCR}));
+            ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(new Color[]{Color.YELLOW,Color.BLUE,Color.RED}));
+            Puzzle puzz = puzzleFromTurningCircles(turningCircles, 6, 800, 800, colors);
             return puzz;
         }
 
@@ -248,13 +257,22 @@ public class CircleSim extends Application {
         return new Puzzle(circles, positions, pieces);
     }
 
-    private Position getPixelPosition(Puzzle puzzle, int x, int y) {
+    private PixelStorer getPixelPosition(Puzzle puzzle, int x, int y) {
         //Given a pixel, this function determines which piece it is in
         HashSet<CutCircle> pixelCircles = new HashSet<CutCircle>();
         ArrayList<CutCircle> puzzleCircles = puzzle.getCircles();
         HashSet<Position> positions = puzzle.getPositions();
+        Border border = puzzle.getBorder();
+        boolean validBorder;
         for(CutCircle circle : puzzleCircles) {
-            if(circle.circlePosition(x,y) == 1) return null;
+            if(circle.circlePosition(x,y) == 1){
+                validBorder = false;
+                for(CutCircle turningCircle : puzzle.getTurningCircles()) {
+                    if(turningCircle.circlePosition(x,y) < 2) validBorder = true;
+                }
+                if(validBorder) return border;
+                else return null;
+            }
             if(circle.circlePosition(x,y) == 0) pixelCircles.add(circle);
         }
         Position pixelPosition = null;
@@ -266,7 +284,7 @@ public class CircleSim extends Application {
 
     private void setPositionPixels(Puzzle puzzle, int width, int length) {
         //Sets the pixel array for each piece in a puzzle
-        Position previousPosition, currentPosition;
+        PixelStorer previousPosition, currentPosition;
         int yStart;
         for(int x=0; x<width; x++) {
             previousPosition = null;
@@ -296,6 +314,7 @@ public class CircleSim extends Application {
         for(Piece p : puzzle.getPieces()){
             p.drawPiece(writer);
         }
+        puzzle.getBorder().drawBorder(writer);
     }
 
     private Puzzle puzzleFromTurningCircles(ArrayList<CutCircle> turningCircles, int turnFrac, int width, int length, ArrayList<Color> colors) {
@@ -308,7 +327,7 @@ public class CircleSim extends Application {
         boolean alreadyThere;
         CutCircle nearCircle = null;
         while(newCircles.size() > 0) {
-        //for(int n=0; n<3; n++) {
+        //for(int n=0; n<2; n++) {
             System.out.println(puzzleCircles.size());
             puzzleCircles.addAll(newCircles);
             previousCircles = newCircles;

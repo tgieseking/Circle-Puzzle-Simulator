@@ -10,6 +10,8 @@ public class Puzzle {
     public HashSet<Piece> getPieces() {return pieces;}
     private HashSet<Position> positions;
     public HashSet<Position> getPositions() {return positions;}
+    private Border border;
+    public Border getBorder() {return border;}
 
     public Puzzle(ArrayList<CutCircle> cs, HashSet<Position> pos, HashSet<Piece> ps) {
         circles = cs;
@@ -19,6 +21,7 @@ public class Puzzle {
         for(CutCircle c : circles) {
             if(c.isTurningCircle()) turningCircles.add(c);
         }
+        border = new Border();
     }
 
     public void testFunc() {
