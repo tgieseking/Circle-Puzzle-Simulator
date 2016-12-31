@@ -1,7 +1,7 @@
 public final class PMath {
     private PMath() {}
 
-    public final double EPSILON = Math.pow(0.1,10.0);
+    public static final double EPSILON = 10;
 
     public static double squareDistance(double x1, double y1, double x2, double y2) {
         return (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
@@ -9,6 +9,13 @@ public final class PMath {
     public static int squareDistance(int x1, int y1, int x2, int y2) {
         return (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2);
     }
+    public static double distance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(squareDistance(x1, y1, x2, y2));
+    }
+    public static double distance(int x1, int y1, int x2, int y2) {
+        return Math.sqrt(squareDistance((double) x1, (double) y1, (double) x2, (double) y2));
+    }
+
 
     public static double rotatedX(double x, double y, double centerX, double centerY, double angle) {
         return centerX+((x-centerX)*(Math.cos(angle))-(y-centerY)*(Math.sin(angle)));

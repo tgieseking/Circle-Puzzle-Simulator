@@ -40,7 +40,9 @@ public class CircleSim extends Application {
         primaryStage.setScene(new Scene(bigBox));
 
 
-        currentPuzzle = createPuzzle(2);
+        currentPuzzle = createPuzzle(3);
+        System.out.println(currentPuzzle.getCircles().size());
+        System.out.println(currentPuzzle.getPieces().size());
         setPositionPixels(currentPuzzle, 800, 800);
         drawPuzzle(currentPuzzle, pw, canvas);
 
@@ -155,6 +157,13 @@ public class CircleSim extends Application {
             Puzzle puzz = puzzleFromCircles(circles, 800, 800, TCL);
             return puzz;
         }
+        if(selector == 3) {
+            CutCircle TCL = new CutCircle(250, 400, 250, 2, true);
+            CutCircle TCR = new CutCircle(445, 400, 250, 2, true);
+            ArrayList<CutCircle> turningCircles = new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCL,TCR}));
+            Puzzle puzz = puzzleFromTurningCircles(turningCircles, 4, 800, 800, TCL);
+            return puzz;
+        }
 
         return null;
     }
@@ -225,8 +234,8 @@ public class CircleSim extends Application {
         }
         HashSet<Piece> pieces = new HashSet<Piece>();
         for(Position position : positions) {
-            if(position.getBoundingCircles().contains(coloringCircle)) pieces.add(new Piece(position, Color.YELLOW));
-            else pieces.add(new Piece(position, Color.GRAY));
+            if(position.getBoundingCircles().contains(coloringCircle)) pieces.add(new Piece(position, Color.RED));
+            else pieces.add(new Piece(position, Color.BLUE));
         }
         return new Puzzle(circles, positions, pieces);
     }
@@ -279,5 +288,65 @@ public class CircleSim extends Application {
         for(Piece p : puzzle.getPieces()){
             p.drawPiece(writer);
         }
+    }
+
+    private Puzzle puzzleFromTurningCircles(ArrayList<CutCircle> turningCircles, int turnFrac, int width, int length, CutCircle coloringCircle) {
+        HashSet<CutCircle> newCircles = new HashSet<CutCircle>();
+        for(CutCircle circle : turningCircles) newCircles.add(circle);
+        HashSet<CutCircle> previousCircles;
+        ArrayList<CutCircle> newCycle;
+        ArrayList<CutCircle> puzzleCircles = new ArrayList<CutCircle>();
+        double newCenterX,newCenterY;
+        boolean alreadyThere;
+        CutCircle nearCircle = null;
+        while(newCircles.size() > 0) {
+        //for(int n=0; n<3; n++) {
+            System.out.println(puzzleCircles.size());
+            puzzleCircles.addAll(newCircles);
+            previousCircles = newCircles;
+            newCircles = new HashSet<CutCircle>();
+            for(CutCircle turningCircle : turningCircles) {
+                for(CutCircle rotatingCircle : previousCircles) {
+                    if(PMath.distance(turningCircle.getCenterX(),turningCircle.getCenterY(),rotatingCircle.getCenterX(),rotatingCircle.getCenterY())
+                    < turningCircle.getRadius() + rotatingCircle.getRadius()) {
+                        newCycle = new ArrayList<CutCircle>();
+                        for(int i=0; i<turnFrac; i++) {
+                            newCenterX =  PMath.fracRotatedX(rotatingCircle.getCenterX(),rotatingCircle.getCenterY(),turningCircle.getCenterX(),turningCircle.getCenterY(),i,turnFrac);
+                            newCenterY = PMath.fracRotatedY(rotatingCircle.getCenterX(),rotatingCircle.getCenterY(),turningCircle.getCenterX(),turningCircle.getCenterY(),i,turnFrac);
+                            //System.out.println("(" + newCenterX + ", " + newCenterY + ")");
+                            alreadyThere = false;
+                            for(CutCircle testNearCircle : puzzleCircles) {
+                                if(PMath.squareDistance(testNearCircle.getCenterX(),testNearCircle.getCenterY(),newCenterX,newCenterY)<PMath.EPSILON) {
+                                    alreadyThere = true;
+                                    nearCircle = testNearCircle;
+                                }
+                            }
+                            for(CutCircle testNearCircle : newCircles) {
+                                if(PMath.squareDistance(testNearCircle.getCenterX(),testNearCircle.getCenterY(),newCenterX,newCenterY)<PMath.EPSILON) {
+                                    alreadyThere = true;
+                                    nearCircle = testNearCircle;
+                                }
+                            }
+                            if(alreadyThere) {
+                                newCycle.add(nearCircle);
+                                //System.out.println("already there");
+                            }
+                            else {
+                                //System.out.println("new circle");
+                                newCycle.add(new CutCircle((int) newCenterX,(int) newCenterY,rotatingCircle.getRadius(),2,false));
+                            }
+                        }
+                        turningCircle.addCycle(newCycle);
+                        for(CutCircle newCircle : newCycle) {
+                            if(!puzzleCircles.contains(newCircle)) {
+                                //System.out.println("added circle");
+                                newCircles.add(newCircle);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return puzzleFromCircles(puzzleCircles, width, length, coloringCircle);
     }
 }
