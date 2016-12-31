@@ -133,42 +133,43 @@ public class CircleSim extends Application {
         //     Puzzle puzz = new Puzzle(circles, pieces);
         //     return puzz;
         // }
-        if(selector == 2) {
-            //CutCircle[] bonusCircles = new CutCircle[10];
-            //for(int i=0; i<10; i++) bonusCircles[i] = new CutCircle(100*i, 0, 10, 2, false);
-            CutCircle TCL = new CutCircle(250, 400, 250, 2, true);
-            CutCircle TCR = new CutCircle(550, 400, 250, 2, true);
-            CutCircle C0  = new CutCircle(-50, 100, 250, 2, false);
-            CutCircle C1  = new CutCircle(250, 100, 250, 2, false);
-            CutCircle C2  = new CutCircle(550, 100, 250, 2, false);
-            CutCircle C3  = new CutCircle(850, 100, 250, 2, false);
-            CutCircle C4  = new CutCircle(850, 400, 250, 2, false);
-            CutCircle C5  = new CutCircle(850, 700, 250, 2, false);
-            CutCircle C6  = new CutCircle(550, 700, 250, 2, false);
-            CutCircle C7  = new CutCircle(250, 700, 250, 2, false);
-            CutCircle C8  = new CutCircle(-50, 700, 250, 2, false);
-            CutCircle C9  = new CutCircle(-50, 400, 250, 2, false);
-            TCL.addCycle(new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCR, C1, C9, C7})));
-            TCL.addCycle(new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{C2, C0, C8, C6})));
-            TCR.addCycle(new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{C4, C2, TCL, C6})));
-            TCR.addCycle(new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{C3, C1, C7, C5})));
-            ArrayList<CutCircle> circles = new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCL, TCR, C0, C1, C2, C3, C4, C5, C6, C7, C8, C9}));
-            //circles.addAll(new ArrayList<CutCircle>(Arrays.asList(bonusCircles)));
-            Puzzle puzz = puzzleFromCircles(circles, 800, 800, TCL);
-            return puzz;
-        }
+        // if(selector == 2) {
+        //     //CutCircle[] bonusCircles = new CutCircle[10];
+        //     //for(int i=0; i<10; i++) bonusCircles[i] = new CutCircle(100*i, 0, 10, 2, false);
+        //     CutCircle TCL = new CutCircle(250, 400, 250, 2, true);
+        //     CutCircle TCR = new CutCircle(550, 400, 250, 2, true);
+        //     CutCircle C0  = new CutCircle(-50, 100, 250, 2, false);
+        //     CutCircle C1  = new CutCircle(250, 100, 250, 2, false);
+        //     CutCircle C2  = new CutCircle(550, 100, 250, 2, false);
+        //     CutCircle C3  = new CutCircle(850, 100, 250, 2, false);
+        //     CutCircle C4  = new CutCircle(850, 400, 250, 2, false);
+        //     CutCircle C5  = new CutCircle(850, 700, 250, 2, false);
+        //     CutCircle C6  = new CutCircle(550, 700, 250, 2, false);
+        //     CutCircle C7  = new CutCircle(250, 700, 250, 2, false);
+        //     CutCircle C8  = new CutCircle(-50, 700, 250, 2, false);
+        //     CutCircle C9  = new CutCircle(-50, 400, 250, 2, false);
+        //     TCL.addCycle(new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCR, C1, C9, C7})));
+        //     TCL.addCycle(new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{C2, C0, C8, C6})));
+        //     TCR.addCycle(new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{C4, C2, TCL, C6})));
+        //     TCR.addCycle(new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{C3, C1, C7, C5})));
+        //     ArrayList<CutCircle> circles = new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCL, TCR, C0, C1, C2, C3, C4, C5, C6, C7, C8, C9}));
+        //     //circles.addAll(new ArrayList<CutCircle>(Arrays.asList(bonusCircles)));
+        //     Puzzle puzz = puzzleFromCircles(circles, 800, 800, TCL);
+        //     return puzz;
+        // }
         if(selector == 3) {
             CutCircle TCL = new CutCircle(250, 400, 250, 2, true);
             CutCircle TCR = new CutCircle(445, 400, 250, 2, true);
             ArrayList<CutCircle> turningCircles = new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCL,TCR}));
-            Puzzle puzz = puzzleFromTurningCircles(turningCircles, 4, 800, 800, TCL);
+            ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(new Color[]{Color.YELLOW,Color.BLUE}));
+            Puzzle puzz = puzzleFromTurningCircles(turningCircles, 4, 800, 800, colors);
             return puzz;
         }
 
         return null;
     }
 
-    private Puzzle puzzleFromCircles(ArrayList<CutCircle> circles, int width, int length, CutCircle coloringCircle) {
+    private Puzzle puzzleFromCircles(ArrayList<CutCircle> circles, int width, int length, ArrayList<CutCircle> coloringCircles, ArrayList<Color> colors) {
         //Given some circles with turning behavior already set, generates a piece for each set of circles with nonempty intersection.
 
         HashSet<Position> positions = new HashSet<Position>();
@@ -233,9 +234,16 @@ public class CircleSim extends Application {
             }
         }
         HashSet<Piece> pieces = new HashSet<Piece>();
+        Boolean colored;
         for(Position position : positions) {
-            if(position.getBoundingCircles().contains(coloringCircle)) pieces.add(new Piece(position, Color.RED));
-            else pieces.add(new Piece(position, Color.BLUE));
+            colored = false;
+            for(int i=0; i<coloringCircles.size(); i++) {
+                if(!colored && position.getBoundingCircles().contains(coloringCircles.get(i))) {
+                    colored = true;
+                    if(colors.size() > i) pieces.add(new Piece(position, colors.get(i)));
+                    else pieces.add(new Piece(position, Color.GRAY));
+                }
+            }
         }
         return new Puzzle(circles, positions, pieces);
     }
@@ -290,7 +298,7 @@ public class CircleSim extends Application {
         }
     }
 
-    private Puzzle puzzleFromTurningCircles(ArrayList<CutCircle> turningCircles, int turnFrac, int width, int length, CutCircle coloringCircle) {
+    private Puzzle puzzleFromTurningCircles(ArrayList<CutCircle> turningCircles, int turnFrac, int width, int length, ArrayList<Color> colors) {
         HashSet<CutCircle> newCircles = new HashSet<CutCircle>();
         for(CutCircle circle : turningCircles) newCircles.add(circle);
         HashSet<CutCircle> previousCircles;
@@ -347,6 +355,6 @@ public class CircleSim extends Application {
                 }
             }
         }
-        return puzzleFromCircles(puzzleCircles, width, length, coloringCircle);
+        return puzzleFromCircles(puzzleCircles, width, length, turningCircles, colors);
     }
 }
