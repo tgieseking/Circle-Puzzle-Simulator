@@ -1,23 +1,23 @@
 import java.util.*;
 
 public class CutCircle {
-    private int centerX;
-    public int getCenterX() {return centerX;}
-    public void setCenterX(int x) {centerX = x;}
-    private int centerY;
-    public int getCenterY() {return centerY;}
-    public void setCenterY(int y) {centerY = y;}
-    private int radius;
-    public int getRadius() {return radius;}
-    public void setRadius(int r) {radius = r;}
-    private int borderWidth;
-    public int getBorderWidth() {return borderWidth;}
-    public void setBorderWidth(int bw) {borderWidth = bw;}
+    private double centerX;
+    public double getCenterX() {return centerX;}
+    public void setCenterX(double x) {centerX = x;}
+    private double centerY;
+    public double getCenterY() {return centerY;}
+    public void setCenterY(double y) {centerY = y;}
+    private double radius;
+    public double getRadius() {return radius;}
+    public void setRadius(double r) {radius = r;}
+    private double borderWidth;
+    public double getBorderWidth() {return borderWidth;}
+    public void setBorderWidth(double bw) {borderWidth = bw;}
     private boolean isTurningCircle;
     public boolean isTurningCircle() {return isTurningCircle;}
     public void setIsTurningCircle(boolean tc) {isTurningCircle = tc;}
 
-    public CutCircle(int x, int y, int r, int bw, boolean tc) {
+    public CutCircle(double x, double y, double r, double bw, boolean tc) {
         centerX = x;
         centerY = y;
         radius = r;
@@ -25,9 +25,9 @@ public class CutCircle {
         isTurningCircle = tc;
     }
 
-    public int circlePosition(int x, int y) {
+    public int circlePosition(double x, double y) {
         //For a given pixel, returns 0 if it is in the circle, 1 if it is in the border, and 2 if it is outside the circle
-        int d2 = PMath.squareDistance(x, y, centerX, centerY);
+        double d2 = PMath.squareDistance(x, y, centerX, centerY);
         if(d2 <= radius*radius) return 0;
         else if(d2 <= (radius+borderWidth)*(radius+borderWidth)) return 1;
         else return 2;

@@ -158,8 +158,8 @@ public class CircleSim extends Application {
         //     return puzz;
         // }
         if(selector == 3) {
-            CutCircle TCL = new CutCircle(250, 400, 250, 2, true);
-            CutCircle TCR = new CutCircle(445, 400, 250, 2, true);
+            CutCircle TCL = new CutCircle(250.0, 400.0, 250.0, 2.0, true);
+            CutCircle TCR = new CutCircle(445.0, 400.0, 250.0, 2.0, true);
             ArrayList<CutCircle> turningCircles = new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCL,TCR}));
             ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(new Color[]{Color.YELLOW,Color.BLUE}));
             Puzzle puzz = puzzleFromTurningCircles(turningCircles, 4, 800, 800, colors);
@@ -341,7 +341,7 @@ public class CircleSim extends Application {
                             }
                             else {
                                 //System.out.println("new circle");
-                                newCycle.add(new CutCircle((int) newCenterX,(int) newCenterY,rotatingCircle.getRadius(),2,false));
+                                newCycle.add(new CutCircle(newCenterX,newCenterY,rotatingCircle.getRadius(),rotatingCircle.getBorderWidth(),false));
                             }
                         }
                         turningCircle.addCycle(newCycle);
