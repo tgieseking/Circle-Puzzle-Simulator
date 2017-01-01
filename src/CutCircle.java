@@ -54,4 +54,8 @@ public class CutCircle {
             addCycle(cycle);
         }
     }
+
+    public String toString() {
+        return "CutCircle:" + centerX + " " + centerY + " " + radius + " " + borderWidth + " " + isTurningCircle;
+    }
 }

@@ -16,6 +16,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 import java.util.concurrent.ThreadLocalRandom;
+import javafx.stage.FileChooser;
+import java.lang.reflect.Field;
+import java.io.*;
 
 
 public class CircleSim extends Application {
@@ -24,9 +27,10 @@ public class CircleSim extends Application {
         launch(args);
     }
 
+    Puzzle currentPuzzle;
+
     @Override
     public void start(Stage primaryStage) {
-        Puzzle currentPuzzle;
         primaryStage.setTitle("Drawing Operations Test");
         Group root = new Group();
         Canvas canvas = new Canvas(800, 800);
@@ -36,11 +40,14 @@ public class CircleSim extends Application {
         TextField scramblerField = new TextField();
         Button scramblerButton = new Button("Scramble");
         HBox scramblerBox = new HBox(scramblerField,scramblerButton);
-        VBox bigBox = new VBox(root, scramblerBox);
+        Button fileButton = new Button("Choose File");
+        VBox bigBox = new VBox(root, scramblerBox,fileButton);
         primaryStage.setScene(new Scene(bigBox));
 
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Puzzle File");
 
-        currentPuzzle = createPuzzle(3);
+        currentPuzzle = createPuzzle(4);
         System.out.println(currentPuzzle.getCircles().size());
         System.out.println(currentPuzzle.getPieces().size());
         setPositionPixels(currentPuzzle, 800, 800);
@@ -89,6 +96,15 @@ public class CircleSim extends Application {
             catch(Exception e) {
 
             }
+        });
+        fileButton.setOnAction(event ->{
+            File selectedFile = fileChooser.showOpenDialog(primaryStage);
+            currentPuzzle = parseCircles(selectedFile);
+            System.out.println(currentPuzzle.getCircles().size());
+            System.out.println(currentPuzzle.getPieces().size());
+            setPositionPixels(currentPuzzle, 800, 800);
+            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawPuzzle(currentPuzzle, pw, canvas);
         });
     }
 
@@ -375,5 +391,40 @@ public class CircleSim extends Application {
             }
         }
         return puzzleFromCircles(puzzleCircles, width, length, turningCircles, colors);
+    }
+
+    public void addCircles(String inputString, ArrayList<CutCircle> circles, ArrayList<Color> colors) {
+        String[] words = inputString.split(" ");
+        if(words.length >= 5) {
+            try{
+                double centerX = Double.parseDouble(words[0]);
+                double centerY = Double.parseDouble(words[1]);
+                double radius = Double.parseDouble(words[2]);
+                double borderWidth = Double.parseDouble(words[3]);
+                Color color;
+                Field field = Class.forName("javafx.scene.paint.Color").getField(words[4].toUpperCase());
+                color = (Color)field.get(null);
+                circles.add(new CutCircle(centerX, centerY, radius, borderWidth, true));
+                colors.add(color);
+            }
+            catch (Exception e) {}
+        }
+    }
+
+    public Puzzle parseCircles(File inputFile) {
+        try{
+            Scanner input = new Scanner(inputFile);
+            ArrayList<CutCircle> circles = new ArrayList<CutCircle>();
+            ArrayList<Color> colors = new ArrayList<Color>();
+            int turnFrac = 1;
+            turnFrac = Integer.parseInt(input.nextLine());
+            while(input.hasNextLine()){
+                addCircles(input.nextLine(),circles,colors);
+            }
+            return puzzleFromTurningCircles(circles,turnFrac,800,800,colors);
+        }
+        catch(Exception e){
+            return null;
+        }
     }
 }
