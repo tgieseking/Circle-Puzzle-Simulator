@@ -42,13 +42,15 @@ public class CircleSim extends Application {
         Button scramblerButton = new Button("Scramble");
         HBox scramblerBox = new HBox(scramblerField,scramblerButton);
         Button fileButton = new Button("Choose File");
+        Button resetButton = new Button("Reset");
+        VBox initBox = new VBox(fileButton,resetButton);
         TextArea sequenceText = new TextArea();
         sequenceText.setPrefHeight(100);
         sequenceText.setPrefWidth(300);
         sequenceText.setWrapText(true);
         Button sequenceButton = new Button("Execute");
         VBox sequenceBox = new VBox(sequenceText,sequenceButton);
-        HBox bottomBox = new HBox(20.0,fileButton,scramblerBox,sequenceBox);
+        HBox bottomBox = new HBox(20.0,initBox,scramblerBox,sequenceBox);
         VBox bigBox = new VBox(root,bottomBox);
         primaryStage.setScene(new Scene(bigBox));
 
@@ -130,6 +132,11 @@ public class CircleSim extends Application {
                 gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
                 drawPuzzle(currentPuzzle, pw, canvas);
             }
+        });
+        resetButton.setOnAction(event -> {
+            currentPuzzle.reset();
+            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawPuzzle(currentPuzzle, pw, canvas);
         });
     }
 
@@ -295,7 +302,7 @@ public class CircleSim extends Application {
                 }
             }
         }
-        return new Puzzle(circles, turningCircles, positions, pieces);
+        return new Puzzle(circles, turningCircles, positions, pieces, colors);
     }
 
     private PixelStorer getPixelPosition(Puzzle puzzle, int x, int y) {

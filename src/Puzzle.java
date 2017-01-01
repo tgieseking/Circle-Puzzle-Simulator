@@ -12,8 +12,9 @@ public class Puzzle {
     public HashSet<Position> getPositions() {return positions;}
     private Border border;
     public Border getBorder() {return border;}
+    private ArrayList<Color> defaultColors;
 
-    public Puzzle(ArrayList<CutCircle> cs, HashSet<Position> pos, HashSet<Piece> ps) {
+    public Puzzle(ArrayList<CutCircle> cs, HashSet<Position> pos, HashSet<Piece> ps, ArrayList<Color> cols) {
         circles = cs;
         positions = pos;
         pieces = ps;
@@ -22,13 +23,15 @@ public class Puzzle {
             if(c.isTurningCircle()) turningCircles.add(c);
         }
         border = new Border();
+        defaultColors = cols;
     }
-    public Puzzle(ArrayList<CutCircle> cs, ArrayList<CutCircle> tc, HashSet<Position> pos, HashSet<Piece> ps) {
+    public Puzzle(ArrayList<CutCircle> cs, ArrayList<CutCircle> tc, HashSet<Position> pos, HashSet<Piece> ps, ArrayList<Color> cols) {
         circles = cs;
         positions = pos;
         pieces = ps;
         turningCircles = tc;
         border = new Border();
+        defaultColors = cols;
     }
 
     public void testFunc() {
@@ -55,6 +58,20 @@ public class Puzzle {
     public void turnCCW(int circleNum) {
         for(Piece piece : pieces) {
             piece.turnCCW(turningCircles.get(circleNum));
+        }
+    }
+
+    public void reset() {
+        Boolean colored;
+        for(Piece piece : pieces) {
+            colored = false;
+            for(int i=0; i<turningCircles.size(); i++) {
+                if(!colored && piece.getBoundingCircles().contains(turningCircles.get(i))) {
+                    colored = true;
+                    if(defaultColors.size() > i) piece.setColor(defaultColors.get(i));
+                    else piece.setColor(Color.GRAY);
+                }
+            }
         }
     }
 }
