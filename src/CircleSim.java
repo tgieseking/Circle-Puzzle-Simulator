@@ -19,6 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import javafx.stage.FileChooser;
 import java.lang.reflect.Field;
 import java.io.*;
+import javafx.scene.control.TextArea;
 
 
 public class CircleSim extends Application {
@@ -33,7 +34,7 @@ public class CircleSim extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Drawing Operations Test");
         Group root = new Group();
-        Canvas canvas = new Canvas(800, 800);
+        Canvas canvas = new Canvas(800, 600);
         GraphicsContext gc = canvas.getGraphicsContext2D();
         PixelWriter pw = gc.getPixelWriter();
         root.getChildren().add(canvas);
@@ -41,16 +42,23 @@ public class CircleSim extends Application {
         Button scramblerButton = new Button("Scramble");
         HBox scramblerBox = new HBox(scramblerField,scramblerButton);
         Button fileButton = new Button("Choose File");
-        VBox bigBox = new VBox(root, scramblerBox,fileButton);
+        TextArea sequenceText = new TextArea();
+        sequenceText.setPrefHeight(100);
+        sequenceText.setPrefWidth(300);
+        sequenceText.setWrapText(true);
+        Button sequenceButton = new Button("Execute");
+        VBox sequenceBox = new VBox(sequenceText,sequenceButton);
+        HBox bottomBox = new HBox(20.0,fileButton,scramblerBox,sequenceBox);
+        VBox bigBox = new VBox(root,bottomBox);
         primaryStage.setScene(new Scene(bigBox));
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Puzzle File");
 
-        currentPuzzle = createPuzzle(4);
+        currentPuzzle = createPuzzle(3);
         System.out.println(currentPuzzle.getCircles().size());
         System.out.println(currentPuzzle.getPieces().size());
-        setPositionPixels(currentPuzzle, 800, 800);
+        setPositionPixels(currentPuzzle, 800, 600);
         drawPuzzle(currentPuzzle, pw, canvas);
 
 
@@ -102,9 +110,26 @@ public class CircleSim extends Application {
             currentPuzzle = parseCircles(selectedFile);
             System.out.println(currentPuzzle.getCircles().size());
             System.out.println(currentPuzzle.getPieces().size());
-            setPositionPixels(currentPuzzle, 800, 800);
+            setPositionPixels(currentPuzzle, 800, 600);
             gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
             drawPuzzle(currentPuzzle, pw, canvas);
+        });
+        sequenceButton.setOnAction(even -> {
+            String sequence = sequenceText.getText();
+            if(sequence != null) {
+                String[] words = sequence.split(" ");
+                String currentMove;
+                for(int i=0; i<words.length; i++) {
+                    try {
+                        currentMove = words[i];
+                        if(currentMove.charAt(currentMove.length()-1) == '\'') currentPuzzle.turnCCW(Integer.parseInt(currentMove.substring(0,currentMove.length()-1)));
+                        else currentPuzzle.turnCW(Integer.parseInt(currentMove));
+                    }
+                    catch(Exception e) {}
+                }
+                gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                drawPuzzle(currentPuzzle, pw, canvas);
+            }
         });
     }
 
@@ -170,31 +195,31 @@ public class CircleSim extends Application {
         //     TCR.addCycle(new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{C3, C1, C7, C5})));
         //     ArrayList<CutCircle> circles = new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCL, TCR, C0, C1, C2, C3, C4, C5, C6, C7, C8, C9}));
         //     //circles.addAll(new ArrayList<CutCircle>(Arrays.asList(bonusCircles)));
-        //     Puzzle puzz = puzzleFromCircles(circles, 800, 800, TCL);
+        //     Puzzle puzz = puzzleFromCircles(circles, 800, 600, TCL);
         //     return puzz;
         // }
         if(selector == 3) {
-            CutCircle TCL = new CutCircle(302.5, 400.0, 250.0, 2.0, true);
-            CutCircle TCR = new CutCircle(497.5, 400.0, 250.0, 2.0, true);
+            CutCircle TCL = new CutCircle(302.5, 300.0, 250.0, 2.0, true);
+            CutCircle TCR = new CutCircle(497.5, 300.0, 250.0, 2.0, true);
             ArrayList<CutCircle> turningCircles = new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCL,TCR}));
             ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(new Color[]{Color.YELLOW,Color.BLUE}));
-            Puzzle puzz = puzzleFromTurningCircles(turningCircles, 4, 800, 800, colors);
+            Puzzle puzz = puzzleFromTurningCircles(turningCircles, 4, 800, 600, colors);
             return puzz;
         }
         if(selector == 4) {
-            CutCircle TCL = new CutCircle(250.0, 500.0, 200.0, 2.0, true);
-            CutCircle TCR = new CutCircle(550.0, 500.0, 200.0, 2.0, true);
-            CutCircle TCT = new CutCircle(400.0, 500.0-150.0*Math.sqrt(3.0), 200.0, 2.0, true);
+            CutCircle TCL = new CutCircle(250.0, 400.0, 200.0, 2.0, true);
+            CutCircle TCR = new CutCircle(550.0, 400.0, 200.0, 2.0, true);
+            CutCircle TCT = new CutCircle(400.0, 400.0-150.0*Math.sqrt(3.0), 200.0, 2.0, true);
             ArrayList<CutCircle> turningCircles = new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCT,TCL,TCR}));
             ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(new Color[]{Color.YELLOW,Color.BLUE,Color.RED}));
-            Puzzle puzz = puzzleFromTurningCircles(turningCircles, 6, 800, 800, colors);
+            Puzzle puzz = puzzleFromTurningCircles(turningCircles, 6, 800, 600, colors);
             return puzz;
         }
 
         return null;
     }
 
-    private Puzzle puzzleFromCircles(ArrayList<CutCircle> circles, int width, int length, ArrayList<CutCircle> coloringCircles, ArrayList<Color> colors) {
+    private Puzzle puzzleFromCircles(ArrayList<CutCircle> circles, ArrayList<CutCircle> turningCircles, int width, int length, ArrayList<CutCircle> coloringCircles, ArrayList<Color> colors) {
         //Given some circles with turning behavior already set, generates a piece for each set of circles with nonempty intersection.
 
         HashSet<Position> positions = new HashSet<Position>();
@@ -270,7 +295,7 @@ public class CircleSim extends Application {
                 }
             }
         }
-        return new Puzzle(circles, positions, pieces);
+        return new Puzzle(circles, turningCircles, positions, pieces);
     }
 
     private PixelStorer getPixelPosition(Puzzle puzzle, int x, int y) {
@@ -390,7 +415,7 @@ public class CircleSim extends Application {
                 }
             }
         }
-        return puzzleFromCircles(puzzleCircles, width, length, turningCircles, colors);
+        return puzzleFromCircles(puzzleCircles, turningCircles, width, length, turningCircles, colors);
     }
 
     public void addCircles(String inputString, ArrayList<CutCircle> circles, ArrayList<Color> colors) {
@@ -421,7 +446,7 @@ public class CircleSim extends Application {
             while(input.hasNextLine()){
                 addCircles(input.nextLine(),circles,colors);
             }
-            return puzzleFromTurningCircles(circles,turnFrac,800,800,colors);
+            return puzzleFromTurningCircles(circles,turnFrac,800,600,colors);
         }
         catch(Exception e){
             return null;

@@ -23,6 +23,13 @@ public class Puzzle {
         }
         border = new Border();
     }
+    public Puzzle(ArrayList<CutCircle> cs, ArrayList<CutCircle> tc, HashSet<Position> pos, HashSet<Piece> ps) {
+        circles = cs;
+        positions = pos;
+        pieces = ps;
+        turningCircles = tc;
+        border = new Border();
+    }
 
     public void testFunc() {
         pieces = new HashSet<Piece>();
@@ -35,8 +42,9 @@ public class Puzzle {
         }
     }
     public void turnCW(int circleNum) {
+        System.out.println(turningCircles.get(circleNum).getCenterX());
         for(Piece piece : pieces) {
-            piece.turnCW(circles.get(circleNum));
+            piece.turnCW(turningCircles.get(circleNum));
         }
     }
     public void turnCCW(CutCircle turningCircle) {
@@ -46,7 +54,7 @@ public class Puzzle {
     }
     public void turnCCW(int circleNum) {
         for(Piece piece : pieces) {
-            piece.turnCCW(circles.get(circleNum));
+            piece.turnCCW(turningCircles.get(circleNum));
         }
     }
 }
