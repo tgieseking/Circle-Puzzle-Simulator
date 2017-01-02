@@ -222,6 +222,22 @@ public class CircleSim extends Application {
             Puzzle puzz = puzzleFromTurningCircles(turningCircles, 6, 800, 600, colors);
             return puzz;
         }
+        if(selector == 5) {
+            CutCircle TCL = new CutCircle(275.0, 300.0, 250.0, 2.0, true);
+            CutCircle TCR = new CutCircle(525.0, 300.0, 250.0, 2.0, true);
+            ArrayList<CutCircle> turningCircles = new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCL,TCR}));
+            ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(new Color[]{Color.YELLOW,Color.BLUE}));
+            Puzzle puzz = puzzleFromTurningCircles(turningCircles, 4, 800, 600, colors);
+            return puzz;
+        }
+        if(selector == 6) {
+            CutCircle TCL = new CutCircle(570.0, 300.0, 200.0, 2.0, true);
+            CutCircle TCR = new CutCircle(230.0, 300.0, 200.0, 2.0, true);
+            ArrayList<CutCircle> turningCircles = new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCL,TCR}));
+            ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(new Color[]{Color.YELLOW,Color.BLUE}));
+            Puzzle puzz = puzzleFromTurningCircles(turningCircles, 8, 800, 600, colors);
+            return puzz;
+        }
 
         return null;
     }
@@ -302,7 +318,9 @@ public class CircleSim extends Application {
                 }
             }
         }
-        return new Puzzle(circles, turningCircles, positions, pieces, colors);
+        Puzzle puzz = new Puzzle(circles, turningCircles, positions, pieces, colors);
+        puzz.removeIncompleteCycles();
+        return puzz;
     }
 
     private PixelStorer getPixelPosition(Puzzle puzzle, int x, int y) {

@@ -45,7 +45,6 @@ public class Puzzle {
         }
     }
     public void turnCW(int circleNum) {
-        System.out.println(turningCircles.get(circleNum).getCenterX());
         for(Piece piece : pieces) {
             piece.turnCW(turningCircles.get(circleNum));
         }
@@ -72,6 +71,42 @@ public class Puzzle {
                     else piece.setColor(Color.GRAY);
                 }
             }
+        }
+    }
+
+    public void removeIncompleteCycles() {
+        HashSet<Position> removedPositions;
+        HashSet<Position> newRemovedPositions = new HashSet<Position>();
+        HashSet<Piece> piecesToRemove = new HashSet<Piece>();
+        Boolean done;
+        for(Piece piece : pieces) {
+            done = false;
+            for(CutCircle boundingCircle : piece.getPosition().getNextClockwise().keySet()) {
+                if(!done && boundingCircle.isTurningCircle() && (piece.getPosition().getNextClockwise().get(boundingCircle)==null||piece.getPosition().getNextCounterClockwise().get(boundingCircle)==null)) {
+                    done = true;
+                    newRemovedPositions.add(piece.getPosition());
+                    piecesToRemove.add(piece);
+                }
+            }
+        }
+        for(Piece piece : piecesToRemove) pieces.remove(piece);
+        while(newRemovedPositions.size()>0) {
+            removedPositions = newRemovedPositions;
+            newRemovedPositions = new HashSet<Position>();
+            piecesToRemove = new HashSet<Piece>();
+            for(Position badPosition : removedPositions) {
+                for(Piece piece : pieces) {
+                    done = false;
+                    for(CutCircle boundingCircle : piece.getPosition().getNextClockwise().keySet()) {
+                        if(!done && boundingCircle.isTurningCircle() && (piece.getPosition().getNextClockwise().get(boundingCircle)==badPosition||piece.getPosition().getNextCounterClockwise().get(boundingCircle)==badPosition)) {
+                            done = true;
+                            newRemovedPositions.add(piece.getPosition());
+                            piecesToRemove.add(piece);
+                        }
+                    }
+                }
+            }
+            for(Piece piece : piecesToRemove) pieces.remove(piece);
         }
     }
 }

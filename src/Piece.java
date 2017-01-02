@@ -13,6 +13,7 @@ public class Piece {
     // public void setBoudingCircles(HashSet<CutCircle> bc) {boundingCircles = bc;}
 
     private Position position;
+    public Position getPosition() {return position;}
 
     public Piece(Position p, Color c) {
         position = p;
