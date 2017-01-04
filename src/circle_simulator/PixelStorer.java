@@ -1,3 +1,5 @@
+package circle_simulator;
+
 import java.util.*;
 
 public class PixelStorer {

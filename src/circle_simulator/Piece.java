@@ -1,3 +1,5 @@
+package circle_simulator;
+
 import java.util.*;
 import javafx.scene.paint.Color;
 import javafx.scene.image.PixelWriter;

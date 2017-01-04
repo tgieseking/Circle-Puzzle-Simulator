@@ -1,3 +1,5 @@
+package circle_simulator;
+
 public final class PMath {
     private PMath() {}
 
