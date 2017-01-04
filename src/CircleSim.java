@@ -38,13 +38,13 @@ public class CircleSim extends Application {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         PixelWriter pw = gc.getPixelWriter();
         root.getChildren().add(canvas);
-        TextField scramblerField = new TextField();
+        TextField scramblerField = new TextField("1000");
         Button scramblerButton = new Button("Scramble");
         HBox scramblerBox = new HBox(scramblerField,scramblerButton);
         Button fileButton = new Button("Choose Puzzle File");
         Button resetButton = new Button("Reset Puzzle");
         VBox initBox = new VBox(fileButton,resetButton);
-        TextArea sequenceText = new TextArea();
+        TextArea sequenceText = new TextArea("1 2 1' 2'");
         sequenceText.setPrefHeight(100);
         sequenceText.setPrefWidth(300);
         sequenceText.setWrapText(true);
@@ -57,7 +57,7 @@ public class CircleSim extends Application {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Puzzle File");
 
-        currentPuzzle = createPuzzle(5);
+        currentPuzzle = createPuzzle(4);
         System.out.println(currentPuzzle.getCircles().size());
         System.out.println(currentPuzzle.getPieces().size());
         setPositionPixels(currentPuzzle, 800, 600);
@@ -124,8 +124,8 @@ public class CircleSim extends Application {
                 for(int i=0; i<words.length; i++) {
                     try {
                         currentMove = words[i];
-                        if(currentMove.charAt(currentMove.length()-1) == '\'') currentPuzzle.turnCCW(Integer.parseInt(currentMove.substring(0,currentMove.length()-1)));
-                        else currentPuzzle.turnCW(Integer.parseInt(currentMove));
+                        if(currentMove.charAt(currentMove.length()-1) == '\'') currentPuzzle.turnCCW(Integer.parseInt(currentMove.substring(0,currentMove.length()-1))-1);
+                        else currentPuzzle.turnCW(Integer.parseInt(currentMove)-1);
                     }
                     catch(Exception e) {}
                 }
@@ -214,9 +214,10 @@ public class CircleSim extends Application {
             return puzz;
         }
         if(selector == 4) {
-            CutCircle TCL = new CutCircle(250.0, 400.0, 200.0, 2.0, true);
-            CutCircle TCR = new CutCircle(550.0, 400.0, 200.0, 2.0, true);
-            CutCircle TCT = new CutCircle(400.0, 400.0-150.0*Math.sqrt(3.0), 200.0, 2.0, true);
+            CutCircle TCL = new CutCircle(275.0, 400.0, 170.0, 2.0, true);
+            CutCircle TCR = new CutCircle(525.0, 400.0, 170.0, 2.0, true);
+            CutCircle TCT = new CutCircle(400.0, 400.0-125.0*Math.sqrt(3.0), 170.0, 2.0, true);
+            System.out.println( 400.0-125.0*Math.sqrt(3.0));
             ArrayList<CutCircle> turningCircles = new ArrayList<CutCircle>(Arrays.asList(new CutCircle[]{TCT,TCL,TCR}));
             ArrayList<Color> colors = new ArrayList<Color>(Arrays.asList(new Color[]{Color.YELLOW,Color.BLUE,Color.RED}));
             Puzzle puzz = puzzleFromTurningCircles(turningCircles, 6, 800, 600, colors);
