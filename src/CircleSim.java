@@ -41,8 +41,8 @@ public class CircleSim extends Application {
         TextField scramblerField = new TextField();
         Button scramblerButton = new Button("Scramble");
         HBox scramblerBox = new HBox(scramblerField,scramblerButton);
-        Button fileButton = new Button("Choose File");
-        Button resetButton = new Button("Reset");
+        Button fileButton = new Button("Choose Puzzle File");
+        Button resetButton = new Button("Reset Puzzle");
         VBox initBox = new VBox(fileButton,resetButton);
         TextArea sequenceText = new TextArea();
         sequenceText.setPrefHeight(100);
@@ -50,14 +50,14 @@ public class CircleSim extends Application {
         sequenceText.setWrapText(true);
         Button sequenceButton = new Button("Execute");
         VBox sequenceBox = new VBox(sequenceText,sequenceButton);
-        HBox bottomBox = new HBox(20.0,initBox,scramblerBox,sequenceBox);
+        HBox bottomBox = new HBox(75.0,initBox,scramblerBox,sequenceBox);
         VBox bigBox = new VBox(root,bottomBox);
         primaryStage.setScene(new Scene(bigBox));
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Puzzle File");
 
-        currentPuzzle = createPuzzle(3);
+        currentPuzzle = createPuzzle(5);
         System.out.println(currentPuzzle.getCircles().size());
         System.out.println(currentPuzzle.getPieces().size());
         setPositionPixels(currentPuzzle, 800, 600);
